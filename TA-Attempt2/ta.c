@@ -23,7 +23,7 @@ void rand_sleep(void);
 void* stu_programming(void* stu_id);
 void* ta_teaching();
 
-int main(int argc, char **argv){
+int main(int argc, char *argv[]){
 	pthread_t *students;
 	pthread_t ta;
 	int* student_ids;
@@ -35,10 +35,11 @@ int main(int argc, char **argv){
 		printf("Incorrect number of arguments");
 		return -1;
 	}
-	if (!isdigit(argv[1])){
-		printf("Argument must be an integer");
-		return -1;
-	}
+
+//	if (!isdigit(argv[1])){
+//		printf("Argument must be an integer");
+//		return -1;
+//	}
 	student_num = atoi(argv[1]);
 	students = (pthread_t*)malloc(sizeof(pthread_t) * student_num);
 	student_ids = (int*)malloc(sizeof(int) * student_num);
