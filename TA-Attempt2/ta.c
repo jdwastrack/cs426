@@ -35,7 +35,7 @@ int main(int argc, char **argv){
 		printf("Incorrect number of arguments");
 		return -1;
 	}
-	if (!isDigit(argv[1])){
+	if (!isdigit(argv[1])){
 		printf("Argument must be an integer");
 		return -1;
 	}
