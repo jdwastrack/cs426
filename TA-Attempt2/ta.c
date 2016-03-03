@@ -6,7 +6,6 @@
 #include <time.h>
 
 #define NUMBER_OF_CHAIRS 3
-
 #define SLEEP_MAX 5
 
 sem_t sem_stu;
