@@ -94,8 +94,8 @@ void* tA(void* param) {
 		if (number_waiting < 0){
 			number_waiting = 0;
 		}
-		printf("TA helping student, number_waiting = %d\n",number_waiting);
 		pthread_mutex_unlock(&count_mutex);
+		printf("TA helping student, number_waiting = %d\n",number_waiting);
 		nanosleep(&time, NULL);
 		pthread_mutex_unlock(&help_mutex);
 	}
