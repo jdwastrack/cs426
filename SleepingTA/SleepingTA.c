@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
 void* tA(void* param) {
 	srand(time(NULL) / 2);
 	struct timespec time;
-	time.tv_sec = 0;
+	time.tv_sec = 1;
 	time.tv_nsec = (long) rand() % 1000000000;
 	while (1) {
 		printf("TA sleeping, number_waiting = %d\n",number_waiting);
