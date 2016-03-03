@@ -5,7 +5,7 @@
 #include <semaphore.h>
 #include <time.h>
 
-#define NUM_SEAT 3
+#define NUMBER_OF_CHAIRS 3
 
 #define SLEEP_MAX 5
 
@@ -15,13 +15,13 @@ sem_t sem_ta;
 pthread_mutex_t mutex;
 
 int chair[3];
-int count = 0; // number of waiting students
+int count = 0;
 int next_seat = 0;
 int next_teach = 0;
 
 void rand_sleep(void);
-void* stu_programming(void* stu_id);
-void* ta_teaching();
+void* studentSimulator(void* stu_id);
+void* teacherSimulator();
 
 int main(int argc, char *argv[]){
 	pthread_t *students;
@@ -36,10 +36,6 @@ int main(int argc, char *argv[]){
 		return -1;
 	}
 
-//	if (!isdigit(argv[1])){
-//		printf("Argument must be an integer");
-//		return -1;
-//	}
 	student_num = atoi(argv[1]);
 	students = (pthread_t*)malloc(sizeof(pthread_t) * student_num);
 	student_ids = (int*)malloc(sizeof(int) * student_num);
@@ -48,11 +44,11 @@ int main(int argc, char *argv[]){
 	sem_init(&sem_ta,0,1);
 	srand(time(NULL));
 	pthread_mutex_init(&mutex,NULL);
-	pthread_create(&ta,NULL,ta_teaching,NULL);
+	pthread_create(&ta,NULL,teacherSimulator,NULL);
 	for(i=0; i<student_num; i++)
 	{
 		student_ids[i] = i+1;
-		pthread_create(&students[i], NULL, stu_programming, (void*) &student_ids[i]);
+		pthread_create(&students[i], NULL, studentSimulator, (void*) &student_ids[i]);
 	}
 
 	pthread_join(ta, NULL);
@@ -63,7 +59,7 @@ int main(int argc, char *argv[]){
 	return 0;
 }
 
-void* stu_programming(void* stu_id)
+void* studentSimulator(void* stu_id)
 {
 	int id = *(int*)stu_id;
 	printf("Student %d is programming\n",id);
@@ -72,13 +68,13 @@ void* stu_programming(void* stu_id)
 	{
 		rand_sleep();
 		pthread_mutex_lock(&mutex);
-		if(count < NUM_SEAT) // student can sit in a chair
+		if(count < NUMBER_OF_CHAIRS) // student can sit in a chair
 		{
 			chair[next_seat] = id;
 			count++;
 			printf("Student %d is waiting in line.\n",id);
 			printf("Student numbers in chairs: %d %d %d\n",chair[0],chair[1],chair[2]);
-			next_seat = (next_seat+1) % NUM_SEAT;
+			next_seat = (next_seat+1) % NUMBER_OF_CHAIRS;
 			pthread_mutex_unlock(&mutex);
 			sem_post(&sem_stu);
 			sem_wait(&sem_ta);
@@ -91,7 +87,7 @@ void* stu_programming(void* stu_id)
 	}
 }
 
-void* ta_teaching()
+void* teacherSimulator()
 {
 	while(1)
 	{
@@ -101,7 +97,7 @@ void* ta_teaching()
 		chair[next_teach]=0;
 		count--;
 		printf("student numbers in chairs: %d %d %d\n",chair[0],chair[1],chair[2]);
-		next_teach = (next_teach + 1) % NUM_SEAT;
+		next_teach = (next_teach + 1) % NUMBER_OF_CHAIRS;
 		rand_sleep();
 		printf("TA is finished with student.\n");
 		pthread_mutex_unlock(&mutex);
