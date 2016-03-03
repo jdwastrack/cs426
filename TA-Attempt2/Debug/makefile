@@ -22,19 +22,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: leedsTa
+all: TA-Attempt2
 
 # Tool invocations
-leedsTa: $(OBJS) $(USER_OBJS)
+TA-Attempt2: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross GCC Linker'
-	gcc  -o "leedsTa" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "TA-Attempt2" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) leedsTa
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) TA-Attempt2
 	-@echo ' '
 
 .PHONY: all clean dependents
