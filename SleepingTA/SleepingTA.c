@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 		return 2;
 	}
 
-	sem_init(&TA_sem, 0, 0);
+	sem_init(&TA_sem, 0, 1);
 	sem_init(&student_sem, 0, 0);
 	number_waiting = 0;
 	go_home = 0;
