@@ -91,9 +91,9 @@ void* tA(void* param) {
 		sem_post(&student_sem);
 		pthread_mutex_lock(&count_mutex);
 		number_waiting--;
-		if (number_waiting < 0){
-			number_waiting = 0;
-		}
+//		if (number_waiting < 0){
+//			number_waiting = 0;
+//		}
 		pthread_mutex_unlock(&count_mutex);
 		printf("TA helping student, number_waiting = %d\n",number_waiting);
 		nanosleep(&time, NULL);
