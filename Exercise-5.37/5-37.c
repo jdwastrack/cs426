@@ -1,13 +1,11 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <time.h>
 
 #define MAX_RESOURCES 5
 
 int available_resources = MAX_RESOURCES;
-pthread_mutex_t leMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void *partC(void*);
 void *partA(void*);
@@ -28,10 +26,10 @@ int main(int argc, char *argv[]){
 						"It is global data shared between the threads.\n"
 						"Its access should be controlled with a semaphore.\n");
 		printf("B. The race condition occurs whenever processes try to modify the available_resources\n"
-						"variable without ensuring that it is locked away from other processes.\n");
+						"variable without ensuring that it is locked away from other processes."
+						"\n ie. in the increase_count and decrease_count functions. \n");
 
 
-		srand (time(NULL));
 
 		int i = 0;
 		int resources_requested = 0;
@@ -50,13 +48,12 @@ int main(int argc, char *argv[]){
 		}
 
 
-		pthread_mutex_destroy(&leMutex);
+		pthread_mutex_destroy(&mutex);
 		pthread_exit(NULL);
 		return 0;
 
 	}
 	if (letter == 'c'){
-		srand (time(NULL));
 
 		int i = 0;
 		int resources_requested = 0;
@@ -75,47 +72,50 @@ int main(int argc, char *argv[]){
 		}
 
 
-		pthread_mutex_destroy(&leMutex);
+		pthread_mutex_destroy(&mutex);
 		pthread_exit(NULL);
 		return 0;
 	}
 
 }
 
+/**
+ * The normal code with the race
+ * condition still present.
+ */
 void* partA(void *resources){
 
-	while(1){
-			decrease_count(resources);
-			printf("Taking %d resources current count = %d\n",resources,available_resources);
-			break;
-	  }
-
+	decrease_count((int)resources);
+	printf("Taking %d resources current count = %d\n",(int)resources,(int)available_resources);
 	sleep(rand()%5);
-	increase_count(resources);
-	printf("Returning %d resources current count = %d\n",resources,available_resources);
+	increase_count((int)resources);
+	printf("Returning %d resources current count = %d\n",(int)resources,(int)available_resources);
 	pthread_exit(NULL);
 }
-
+/**
+ * Uses a mutex to stabilize the race condition
+ * from part A.
+ */
 void* partC(void *resources){
 
 	while(1){
-		pthread_mutex_lock(&leMutex);
-		if((int)available_resources<(int)resources){
-			pthread_mutex_unlock(&leMutex);
+		pthread_mutex_lock(&mutex);
+		if((int)available_resources<(int)resources){ // that number of resources is not available, concede control of resource.
+			pthread_mutex_unlock(&mutex);
 		}
 		else{
-			decrease_count(resources);
-			printf("Taking %d resources current count = %d\n",resources,available_resources);
-			pthread_mutex_unlock(&leMutex);
+			decrease_count((int)resources); // that number of resources are available, so we take them.
+			printf("Taking %d resources current count = %d\n",(int)resources,(int)available_resources);
+			pthread_mutex_unlock(&mutex); // concede control
 			break;
 		}
 	  }
 
 	sleep(rand()%5);
-	pthread_mutex_lock(&leMutex);
-	increase_count(resources);
-	printf("Returning %d resources current count = %d\n",resources,available_resources);
-	pthread_mutex_unlock(&leMutex);
+	pthread_mutex_lock(&mutex); // lock control of available_resources
+	increase_count((int)resources); // give the resources back
+	printf("Returning %d resources current count = %d\n",(int)resources,(int)available_resources);
+	pthread_mutex_unlock(&mutex);
 
 	pthread_exit(NULL);
 }
