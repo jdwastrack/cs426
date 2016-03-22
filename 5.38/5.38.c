@@ -92,7 +92,7 @@ void* partC(void *resources){
 	//}
 
 	sleep(rand()%5);
-	pthread_mutex_lock(&mutex); // lock control of available_resources
+	//pthread_mutex_lock(&mutex); // lock control of available_resources
 	increase_count((int)resources); // give the resources back
 	printf("Returning %d resources current count = %d\n",(int)resources,(int)available_resources);
 	pthread_mutex_unlock(&mutex);
@@ -113,10 +113,10 @@ void decrease_count(int count)
 		//return -1;
 		pthread_cond_wait(&cond, &mutex);
 	}
-	else
-	{
+	//else
+	//{
 		available_resources = available_resources - count;
-	}
+	//}
 //	while (available_resources < count)
 //		wait(mutex);
 //	available_resources -= count;
